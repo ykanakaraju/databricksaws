@@ -1,0 +1,16 @@
+ 
+ Lab 5: Export and Import AWS Databricks Notebooks
+ -------------------------------------------------
+ 
+ 1. Click on 'Workspace' -> 'CTSDemoNotebook1' -> Export -> DBC Archive
+	
+ 2. The notebook file will be downloaded to your machine.
+	You can export the notebook in other formats as well such as .pynb & .py files
+		
+ 3. Delete the current notebook
+	3.1 Click on 'Workspace' -> 'CTSDemoNotebook1' -> 'Move to Trash'
+	3.2 Confirm to delete
+		
+ 4. Import the notebook into your workspace.
+	4.1 Click on 'Workspace' -> '<your account> dropdown' -> Import
+	4.2 Browse and import the .dbc file

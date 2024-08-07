@@ -1,0 +1,281 @@
+
+ Lab 7 - Setup AWS resources for Databricks
+ --------------------------------------------
+
+ 1. Setup group and users for databricks
+
+ 	1.1. Create an IAM user group for databricks users/accounts. Do not attach any policies yet.
+	     Name: ctsdbgroup
+
+ 	1.2. Create a couple of IAM users for databricks.
+	
+		Users: ctsdbuser1, ctsdbuser2
+			Provide user access to the AWS Management Console: Check
+			Are you providing console access to a person?  I want to create an IAM user			
+			Specify a custom password (and turn off 'Require password reset' option)
+				password: Password@123
+			Users must create a new password at next sign-in: Uncheck
+
+ 	1.3. Add both the users to the group created in step 1.
+
+	1.4 Download the access key .csv files.
+
+
+ 2. Setup an S3 bucket to store our datasets using Admin account.
+
+	Name: cts-databricks
+	Note: The users created in step 1 will not have access to this bucket at the moment.
+
+
+ 3. Attach inline policy to give access to a specific S3 bucket for the group
+
+	Ref URL: https://docs.databricks.com/aws/iam/instance-profile.html
+
+	3.1 Goto IAM conosle, open the group, open 'Permissions' tab
+	    Click on 'Add permissions' -> 'Create inline policy' option
+
+	3.2 Click on JSON button & paste the JSON code shown towards the end of this document
+	    NOTE: Make sure you are using the correct bucket-name in the script
+
+	3.3 Click next and fill the details
+		Name: CTSDBGroupS3Policy
+
+	3.4 Click on 'Create policy' button
+
+
+ 4. Attach 'AWSGlueConsoleFullAccess' policy to the group.
+
+	4.1 Goto IAM console, open the group, open 'Permissions' tab
+	    Click on 'Add permissions' -> 'Attach policies' option
+
+	4.2 Search for and attach 'AWSGlueConsoleFullAccess' policy to the group
+
+ 
+ 5. Upload JSON Dataset to s3 to crawl using AWS Glue Crawler
+
+	5.1 Upload the 'retail_db_json' dataset (only folders, not sql file) to the S3 bucket
+
+
+ 6. Create an 'AWSGlueServiceRole' to be attached to the group, so that we can create 
+    Glue crawlers to create metadata tables to query JSON data we uploaded to S3 
+
+	6.1 Sign-in to Admin account, goto IAM console and create a Glue Role
+		
+		AWS Service Use-case: Glue
+		Policy to be added: AWSGlueServiceRole (AWS managed)
+		Role name: AWSGlueServiceRole-retail_db_json
+		**IMP: The role name must have the prefix 'AWSGlueServiceRole-'
+
+ 7. Attach an inline policy to the above role to access 'cts-databricks' S3 bucket
+
+	7.1 Open the role AWSGlueServiceRole-retail_db_json
+	
+	7.2 Select 'Add permissions' -> 'Attach policies' option
+	
+	7.3 Add the JSON code shown towards the end of this document
+	
+	7.4 Give a name to the policy and create the policy.
+		Name: CTSDBGlueS3Policy
+		
+	** At this point the role should have the following two policies
+		AWSGlueServiceRole 
+		CTSDBGlueS3Policy
+
+ 8. Login with user account and run a Glue crawler on 'retail_db_json' dataset.
+	
+	8.1 Signin to AWS MC using 'ctsdbuser1' credentials (in an incognito window)
+	
+	8.2 Open 'AWS Glue' console and select 'Data Catalog' -> 'Crawlers' menu option.
+	
+	8.3 Create a crawler by clicking on 'Create crawler' button
+		Name: Retail JSON Crawler
+		Add data source 
+			Data source: s3
+			S3 path: s3://cts-databricks/retail_db_json/
+			Subsequent crawler runs: Crawl all sub-folders
+			Click on 'Add S3 data source' button
+		IAM role: AWSGlueServiceRole-retail_db_json  (created in step 6 & 7)
+		Target database (add a new database and select it from the dropdown)
+			Add database: retail_db_json_db
+		Click on 'Create crawler' button to create the crawler	
+		
+	8.4 Select the crawler and click on 'Run' button 
+	
+	8.5 This should create the required (meta) tables in the Glue catalog
+
+		
+ 9. Create AWS IAM Role for EC2 instances. (Switch back to Admin user)
+
+	9.1 Open IAM console and create an EC2 Role
+	    
+		AWS Service Use-case: EC2
+		Policy to be added: No need to attach any policies/permissions
+		Role name: CTSDatabaricksEC2Role
+
+	9.2 Click on the 'View role' button and make a note of 'Instance profile ARN' & 'Role ARN'	
+
+		Note: If you want to attach an IAM role to an ec2 instance you need to use Instance Profile.
+		When you use the CLI or SDK, you need to create the instance profile separately and attach 
+		it to the IAM role and then attach the instance profile to the ec2 instance.
+
+	** Instance profile ARN: arn:aws:iam::157549686651:instance-profile/CTSDatabaricksEC2Role
+		   IAM role ARN: arn:aws:iam::157549686651:role/CTSDatabaricksEC2Role
+		   
+	9.3 Attach an inline policy to the above role to access 'cts-databricks' S3 bucket	
+		
+		JSON: As shown towards the end of this document
+		Name: CTSDBGroupS3Policy
+		
+	9.4 Attach 'AWSGlueServiceRole policy' to the above role.
+	
+	NOTE: After these steps, the 'Permissions policies' of the role should have two policies:
+			AWSGlueServiceRole
+			CTSDBGroupS3Policy
+
+ 10. Create and login to a Databricks workspace. 
+	
+	10.1 Login to your Databricks account and create a workspace. (or open an existing workspace)
+		
+		Create workspace -> Quick start (recommended)
+		Workspace Name: AWS Databricks Workspace
+		AWS Region: us-east-1
+
+		This will launch an AWS Cloud Formation stack
+
+	10.2 Enter your account password in AWS Cloud Formation stack and click on 'Create stack'
+	     This will provision the workspace resources on AWS.
+		 
+	10.3 Refresh your Databricks workspace page and wait until the status is 'Running'
+	
+	10.4 Open the workspace and sign-in to the Databricks UI using your databricks credentials.
+	
+	
+ 11. Add 'PassRole' policy (on EC2 role) to the Databricks IAM role
+ 
+	11.1 Open the databricks workspace page (from Account Console) and click on the workspace.
+	
+	11.2 Make a note of ARN key under credentials card. 
+		(for example: arn:aws:iam::157549686651:role/databricks-workspace-stack-51969-role)
+		
+	11.3 Open your AWS account, open IAM and search for the above role (i.e databricks-workspace-stack-51969-role)
+	
+	11.4 Click on the role and click on the policy name to edit.
+	
+	11.5 Append the following JSON to the existing permissions.
+	
+		{
+			"Effect": "Allow",
+			"Action": "iam:PassRole",
+			"Resource": "arn:aws:iam::157549686651:role/CTSDatabaricksEC2Role"
+		}
+		
+		NOTE: Make sure your account name and policy name are correct. 		
+
+ 12. Register AWS IAM Instance Profile with Databricks Account.
+	
+	12.1 Login to your databricks UI with the workspace you created earlier	
+	12.2 Click on <account menu> (top-right) -> 'Admin Settings' menu option	
+	12.3 Click on 'Instance profiles' tab and click on 'Add instance profile' button.	
+	12.4 Provide the 'Instance profile ARN' & 'IAM role ARN' and click on 'Add' 	
+
+ 13. Create a databricks cluster and attach the instance profile to the cluster.
+
+	13.1 Create a single node cluster with the following details:
+
+		Name: CTS Demo Cluster  (Edit the heading by clicking on pencil icon)
+		Policy: Unrestricted - Single Node
+		Use photon acceleration: Uncheck
+		Node type: m5d.large (8 GB Memory, 2 Cores)
+		Terminate after 15 minutes of inactivity
+		Instance profile: CTSDatabaricksEC2Role
+
+		* Leave all other options as defaults
+		
+		Click on 'Create compute' button
+	     
+	 
+ 14. Create a notebook in your databricks workspace and access the S3 bucket (cts-databricks)
+ 
+	14.1 Open your Databricks UI for the workspace you created earlier
+	
+	14.2 Create a new notebook and run the following code:
+	
+		df1 = spark.read.json("s3://cts-databricks/retail_db_json/orders/")
+		display(df1)
+		
+
+ 15. Configure Glue Data Catalog as the metastore on your cluster
+ 
+	15.1 Open cluster page on Databricks UI and 'Terminate' your cluster
+	
+	15.2 Click on the cluster and click on 'Edit' to edit cluster configurations.
+	
+	15.3 Expand 'Advanced Options' section and select 'Spark' tab
+	
+	15.4 Add the following line to 'Spark Config' section
+	
+			spark.databricks.hive.metastore.glueCatalog.enabled true
+			
+	15.5 Save the changes
+	
+	15.6 Restart the cluster again. Wait until cluster is restarted.
+
+
+ 16. Create a Glue crawler to crawl the 'retail_db' s3 bucket.
+ 
+		database: retail_db_csv_db
+		crawler: retail_db_csv_crawler
+		S3 bucket to crawl: s3://cts-databricks/retail_db/
+		IAM ROle: AWSGlueServiceRole-retail_db_json
+		
+		Run the crawler and wait until the tables are created.
+		
+ 17. Query the Glue tables (which are linked to S3 buckets) using spark
+ 
+	17.1 Open the notebook and run the following commands in separate cells.
+	
+		spark.sql("show databases").show()		
+		spark.sql("use retail_db_csv_db")		
+		spark.sql("select * from orders").show()
+		
+	
+
+------------------------------------------------------------------------
+   inline policy JSON script (use this in steps: 3.2, 7.3, 9.3 )
+------------------------------------------------------------------------
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "s3:ListBucket"
+      ],
+     "Resource": [
+        "arn:aws:s3:::cts-databricks"
+      ]
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "s3:PutObject",
+        "s3:GetObject",
+        "s3:DeleteObject",
+        "s3:PutObjectAcl"
+      ],
+      "Resource": [
+         "arn:aws:s3:::cts-databricks/*"
+      ]
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "s3:ListAllMyBuckets"
+      ],
+     "Resource": [
+        "arn:aws:s3:::*"
+      ]
+    }
+  ]
+}
+--------------------------------------------------

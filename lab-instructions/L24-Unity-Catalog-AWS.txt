@@ -1,0 +1,200 @@
+
+ Lab 24: Setup Unity Catalog on AWS
+ -----------------------------------
+	Ref: 
+	https://docs.databricks.com/en/data-governance/unity-catalog/get-started.html
+	https://docs.databricks.com/en/data-governance/unity-catalog/index.html
+	
+
+ 1. Login to your Databricks account and create a Workspace in us-east-1 region
+ 
+		Name: CTSDatabricksUC
+		Region: us-east-1		
+		*** Note: This takes several minutes 
+		
+ 2. Open the workspace and make a note of the ARN key and Databricks Account ID
+ 
+		ARN: <your-workspace-ARN>
+		Databricks Account ID: <your-databricks-account-id>
+		
+ 3. Create an S3 bucket for your centralized cloud storage location for our lakehouse
+ 
+		Name: cts-databricks-uc-metastore 
+		
+ 4. Create an IAM role for Databricks to access the S3 bucket (i.e federating access) 
+ 
+	4.1 Open IAM Console, go to 'Roles' and click on 'Create Role'
+	4.2 Select 'Custom trust policy'
+	4.3 Paste the JSON code from Snippet-1
+		Replace <DATABRICKS-ACCOUNT-ID> placeholder with actual value.
+	4.4 Give the role a name and create it
+		Name: CTSDatabricksUCMasterRole
+		
+ 5. Modify the trust relationship policy to make it “self-assuming.”
+
+	5.1 Return to your saved IAM role and go to the Trust Relationships tab.
+	5.2 Edit the trust relationship policy.
+	
+		Add the following ARN to the Principal of the “Allow” statement.
+	
+		"arn:aws:iam::<YOUR-AWS-ACCOUNT-ID>:role/<THIS-ROLE-NAME>"
+		
+		-> Replace <YOUR-AWS-ACCOUNT-ID> and <THIS-ROLE-NAME> with your actual IAM role values.
+		
+		Your policy should now look like in JSON Snippet-2 (with replacement text updated to use your Databricks account ID and IAM role values):
+	
+	5.3 Save the changes.
+	
+ 6. Create a policy to be attached to the above role (i.e CTSDatabricksUCMasterRole)
+ 
+	6.1 Click on 'Policies' menu option and click on 'Create Policy' button.
+	6.2 Create policy with the following:
+		Name: CTSDatabricksUCS3Policy
+		JSON: As in Snippet 3
+			-> Replace <BUCKET>, <AWS-ACCOUNT-ID>, <AWS-IAM-ROLE-NAME> with correct values.
+		
+ 7. Attach the IAM policy to the IAM role.
+	On the IAM role’s Permissions tab, attach the IAM policy you just created.	
+	
+ 8. Open the S3 bucket, go to 'Permissions' tab, and edit the 'Bucket policy'
+ 
+		Bucket Policy JSON: Snippet 4
+		-> Make sure to replace the place-holders with corresponding values.
+	
+ 9. Login to your Databricks account, create a metastore and attach it to your workspace.	
+ 
+	9.1 Click on "Data" menu and click on 'Create metastore"
+		Name: lakehouse-us-east-1
+		Region: us-east-1  (this should match the region in which S3 bucket is created)
+		S3 bucket path: <put s3 path>  s3://cts-databricks-uc-metastore
+		IAM role ARN: <put IAM ARM of the role created in step 2>
+	
+	9.2 Attach the metastore to your current workspace.
+	9.3 Enable 'Unity Catalog' on your workspace.	
+
+ 10. Open databricks workspace UI and click on "Data" menu	
+ 
+ 11. Create a catalog, schema and table. And insert some data into the table.
+
+	-> Click on 'Create catalog' and create one. (Name: dev)
+	-> Create a 'Schema' inside the catalog (name: uc_demo)
+	-> Click on 'SQL Editor' menu option to create tables, insert data etc.	
+		-> select your catalog and schema from the menu
+
+	-> Create a managed table (managed by the catalog)
+
+	CREATE TABLE dev.uc_demo.scores(
+	  user_id INT, score INT, inserted_date DATE
+	)
+	PARTITIONED BY (inserted_date);
+
+	DESCRIBE EXTENDED dev.uc_demo.scores;
+
+	INSERT INTO dev.uc_demo.scores VALUES(1, 100, CURRENT_DATE())
+	
+--------------------------------------------
+	Snippet 1
+--------------------------------------------
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "Statement1",
+            "Effect": "Allow",
+            "Principal": {
+                "AWS": "arn:aws:iam::414351767826:role/unity-catalog-prod-UCMasterRole-14S5ZJVKOTYTL"
+            },
+            "Action": "sts:AssumeRole",
+            "Condition": {
+                "StringEquals": {
+                    "sts:ExternalId": "29173244-6c7e-4b2f-abac-da594f023958"
+                }
+            }
+        }
+    ]
+}
+
+--------------------------------------------
+	Snippet 2
+--------------------------------------------
+
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "Statement1",
+            "Effect": "Allow",
+            "Principal": {
+                "AWS": [
+                    "arn:aws:iam::414351767826:role/unity-catalog-prod-UCMasterRole-14S5ZJVKOTYTL",
+                    "arn:aws:iam::<AWS-ACCOUNT-ID>:role/CTSDatabricksUCMasterRole"
+                ]
+					
+            },
+            "Action": "sts:AssumeRole",
+            "Condition": {
+                "StringEquals": {
+                    "sts:ExternalId": "29173244-6c7e-4b2f-abac-da594f023958"
+                }
+            }
+        }
+    ]
+}
+
+--------------------------------------------
+	Snippet 3
+--------------------------------------------
+
+{
+ "Version": "2012-10-17",
+ "Statement": [
+     {
+         "Action": [
+             "s3:GetObject",
+             "s3:PutObject",
+             "s3:DeleteObject",
+             "s3:ListBucket",
+             "s3:GetBucketLocation",
+             "s3:GetLifecycleConfiguration",
+             "s3:PutLifecycleConfiguration"
+         ],
+         "Resource": [
+             "arn:aws:s3:::<BUCKET>/*",
+             "arn:aws:s3:::<BUCKET>"
+         ],
+         "Effect": "Allow"
+     },
+     {
+         "Action": [
+             "sts:AssumeRole"
+         ],
+         "Resource": [
+             "arn:aws:iam::<AWS-ACCOUNT-ID>:role/<AWS-IAM-ROLE-NAME>"
+         ],
+         "Effect": "Allow"
+     }
+   ]
+}
+
+--------------------------------------------
+	Snippet 3 (Bucket Policy)
+--------------------------------------------
+
+{
+	"Version": "2012-10-17",
+	"Statement": [
+		{
+			"Sid": "Statement1",
+			"Principal": {
+				"AWS": "arn:aws:iam::<YOUR-AWS-ACCOUNT-ID>:role/<THIS-ROLE-NAME>"
+			},
+			"Effect": "Allow",
+			"Action": [ "s3:*" ],
+			"Resource": [
+				"arn:aws:s3:::<BUCKET>/*",
+             	"arn:aws:s3:::<BUCKET>"
+			]
+		}
+	]
+}
+

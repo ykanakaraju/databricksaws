@@ -1,0 +1,55 @@
+ 
+ Lab 3 - Uploading data to Databricks
+ ------------------------------------
+  
+ There are three ways to upload your data to Databricks.
+  
+    1. Using CLI commands (Preferred method)
+	2. Using 'Upload data' option using Databricks UI
+	3. Using 'Data Import' wizard (very restrictive)
+	
+	
+ Upload files using DBFS tool inside the UI   
+ ------------------------------------------  
+ 1. Create and launch a Databricks workspace using AWS (Refer to lab 1 in AWS)
+  
+ 2. Upload data using 'Upload data' option  
+	2.1 Click on 'Data' from side-menu
+	2.2 Click on '+ Add' -> 'Add data' option (towards top-right)
+	2.3 Click on 'DBFS' button
+	2.3 Drag and drop the files / folders here to upload to DBFS
+	
+ Create Notebook to access files 
+ --------------------------------
+  
+ 3. Create a cluster
+	3.1 Select 'New' -> 'Cluster' option from side menu.
+		Name: CTS Demo Cluster  (Edit the heading by clicking on pencil icon)
+		Policy: Unrestricted - Single Node
+		Use photon acceleration: Uncheck
+		Node type: m5d.large (8 GB Memory, 2 Cores)
+		Terminate after 15 minutes of inactivity
+		* Leave all other options as defaults		
+		
+	3.2 Click on 'Create Cluster' button
+	3.3 Wait until the cluster state comes to 'running' (green tick mark)
+	
+ 4. Create a Notebook
+	4.1 Select 'New' -> 'Notebook' option from side menu.
+		Name: CTS Demo Notebook
+		Language; Python
+		Cluster: CTS Demo Cluster (created in step 3)
+		
+ 5. Perform file system operations on Databricks	
+	** Databricks provides %fs magic command to do file system operations **	
+	%fs ls
+	%fs ls /FileStore
+	%fs ls /FileStore/tables
+	%fs ls /FileStore/tables/categories
+	
+	
+	
+	
+	
+	
+	

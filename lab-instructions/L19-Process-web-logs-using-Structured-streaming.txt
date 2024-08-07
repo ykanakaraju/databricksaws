@@ -1,0 +1,48 @@
+
+ Lab 19: Processing (reading & writing) Web server logs using Structured Streaming
+ ---------------------------------------------------------------------------------
+ 
+ NOTE: This is continuation of previous lab
+       Make sure you completed the steps in the previous labs	
+  
+ Before starting:
+ 
+	-> Launch an All-purpose compute cluster
+	-> Install gen_logs using Web terminal.
+	-> Validate the nc web-server on a separate terminal
+	
+	
+ 1. Start gen_logs script on a web terminal
+	
+	start_logs.sh	
+	tail_logs.sh	
+	Click Ctrl+C to terminate the above command.
+	
+	
+ 2. Push the logs to netcat server
+ 
+	2.1 Open a web terminal and run the following command:
+	
+		/opt/gen_logs/tail_logs.sh | nc -l -p 9000
+		
+	
+ 3. Import the notebook 'L19-Processing-Web-logs-using-Structured-Streaming.dbc' and run the cells. 
+
+	In this notebook, we demostrate the following:
+
+	* Read streaming data from netcat running on localhost:9000
+	* Write the data onto console to see it with a trigger interval of 5 seconds
+	* Write streaming data into CSV files with a trigger interval of 5 seconds
+  
+  
+  Some important points to remember
+  ---------------------------------
+  
+  When you run streaming queries in the notebook, the command run indefinatly
+  You can click on "Cancel" link to stop the streaming query.
+  However, when you stop the streaming query, the underlieing streaming source (netcat) will be broken.
+  You need to start the following comman again in the terminal
+	/opt/gen_logs/tail_logs.sh | nc -l -p 9000
+  You should again start reading the streaming data (i.e run the pipeline from the start)
+  
+  

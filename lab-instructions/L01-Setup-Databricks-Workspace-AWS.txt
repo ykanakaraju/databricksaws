@@ -1,0 +1,57 @@
+
+
+ Lab 1 - Getting Started with Databricks on AWS
+ ----------------------------------------------
+
+ 1. Make sure you have a valid AWS account.
+   
+   
+ 2. Sign-up for a Databricks account with 'AWS' as the cloud provider
+    (Preferably 'Premium Account')
+
+	2.1 Sign-up using the following URL:
+	    https://www.databricks.com/try-databricks
+	2.2 Fill the details with a valid email account and click on 'Continue' button
+	2.3 Select 'Amazon Web Services' as the cloud provider
+	2.4 Complete the sign-up process by following the instructions sent in the email.
+	
+
+  3. Sign in to the databricks account using the following URL:
+	 https://accounts.cloud.databricks.com/login
+	 
+  
+  4. Create a Databricks workspace
+
+	4.1 Click on workspaces menu option
+	4.2 Click on 'Create Workspace' drop-down and select 'Quickstart'
+	4.3 Provide a workspace name (use only lower-case) and select a region (us-east-1)
+            Click on 'Start quickstart'
+		
+			Name: databricksdemows1
+			Region: us-east-1
+	4.4 Sign in to your AWS account (if not already signed-in)	
+	4.5 This will launch a CloudFormation stack and provisions all the required resources.
+
+	    -> Verify the details
+		-> Provide your databricks account passowrd
+		-> Check acknowledgement checkbox
+		-> Click on 'Create stack' button.
+		
+		Wait until the cloudformation stck completes provisioning your resources.	
+
+
+  5. Launch you Databricks workspace
+
+	5.1 Go to 'Workspaces' page on Databricks (refresh if required) and click on 'Open' button
+  	5.2 Sign in (again) to your Databricks account associated with this workspace.
+
+   
+  6. Cleanup your resources (if you are not continuing with other labs)
+
+	6.1 Go to 'Workspaces' page in your Databricks account.	
+	6.2 Select 'Delete' option from the menu (verticle dots icon)
+	    This deletes the workspace. 		
+	6.3 Login to your AWS account and delete the cloudformation stack.
+	
+
+  
