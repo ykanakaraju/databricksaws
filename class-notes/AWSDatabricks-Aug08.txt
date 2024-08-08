@@ -1,0 +1,256 @@
+
+  AWS Databricks ( 11 session of 4 hrs each)
+  --------------------------------------------
+   Databricks Basics
+   PySpark Essentials
+	- Spark basics
+	- Spark SQL Crash course
+	- Structured Streaming basics
+   Databricks on AWS
+   Databricks Lakehouse Platform 
+	– Delta Lake Basics
+	- Delta Lake Features
+   ELT with Spark SQL and Python
+   Incremental Data Processing 
+	- Structured Streaming
+	- AutoLoader
+   Delta Live Tables - Production pipelines	
+   Data governance
+
+
+  Materials
+  ---------
+  - PDF presentations
+  - Code Modules (PySpark)
+  - Databricks Notebooks (DBC files)
+  - Lab Instructions
+  - Class Notes
+  - Github: https://github.com/ykanakaraju/databricksaws
+
+
+  Getting started with Spark on Databricks
+  ----------------------------------------   
+   ** Databricks Community Edition (free edition)
+ 		
+	Signup: https://www.databricks.com/try-databricks
+		Screen 1: Fill up the details with valid email address
+		Screen 2: Click on "Get started with Community Edition" link (Not the 'Continue' button)
+
+	Login: https://community.cloud.databricks.com/login.html
+
+	Downloading a file from Databricks
+	----------------------------------
+		/FileStore/<FILEPATH>
+		https://community.cloud.databricks.com/files/<FILEPATH>?o=1072576993312365
+
+		Example:
+		dbfs:/FileStore/output/wc/part-00000
+		https://community.cloud.databricks.com/files/output/wc/part-00000?o=1072576993312365
+
+		dbfs:/FileStore/output/wordcount1/part-00000
+		https://community.cloud.databricks.com/files/output/wordcount1/part-00000?o=1072576993312365
+
+
+ 	Enabling DBFS File browser
+	--------------------------
+	<your account (top-right)> -> Settings -> Advanced -> Other -> DBFS File Browser (enable it)
+	(then, reload/refresh the browser page)
+  
+  Databricks Basics
+  -----------------
+	
+	1. Compute - Spin up cluster resources
+		
+		1. All purpose clusters - continuously running, persistent cluster
+		2. Job clusters - spinned up to execute a job and then terminated	
+
+	2. Catalog
+		-> All data is stored in Catalog
+		-> All local files are store in /FileStore directory
+		-> Default hive warehouse directory : /user/hive/warehouse
+
+	3. Workspace
+		-> All the notebooks are managed in the workspace
+
+
+  DBFS File Operations
+  --------------------
+
+
+  Databricks 'dbutils'
+  --------------------
+
+	'help' command
+	------------
+	dbutils.help()
+	dbutils.fs.help()
+	dbutils.fs.help('ls')
+
+
+	'ls' command
+	------------
+	dbutils.fs.ls("/")
+	dbutils.fs.ls("/FileStore")
+		list paths => [ d[0] for d in dbutils.fs.ls("/FileStore")]
+	dbutils.fs.ls("/FileStore/testdata/csv")
+
+
+	'mkdirs' command
+	----------------
+	dbutils.fs.mkdirs("/FileStore/testdata2")
+	dbutils.fs.ls("/FileStore")
+
+
+	'cp' command to copy files between DBFS directories
+	---------------------------------------------------
+	dbutils.fs.cp("/FileStore/testdata/csv/2011_summary.csv", "/FileStore/testdata2")
+	dbutils.fs.cp("/FileStore/testdata/csv/2012_summary.csv", "/FileStore/testdata2")
+	dbutils.fs.cp("/FileStore/testdata/csv/2013_summary.csv", "/FileStore/testdata2")
+
+	dbutils.fs.ls("/FileStore/testdata/csv")
+
+
+	'mv' command for moving or renaming files
+	------------------------------------------
+	dbutils.fs.help('mv')
+
+	dbutils.fs.mv("/FileStore/testdata/csv", "/FileStore/testdata3", recurse=True)
+	dbutils.fs.ls('/FileStore/testdata3')
+
+	dbutils.fs.mv('/FileStore/testdata3/2011_summary.csv', '/FileStore/testdata3/2011_summary_renamed.csv')
+
+
+	'rm' command to remove files & directories from DBFS
+	-----------------------------------------------------
+	dbutils.fs.rm('/FileStore/testdata3/2011_summary_renamed.csv')
+	dbutils.fs.rm('/FileStore/testdata3/', recurse=True)
+
+
+  Spark
+  -----
+
+    Spark is an open-source in-memory distributed computing framework.
+
+	-> Spark is written in Scala
+
+	-> Spark is a ployglot  
+		-> Spark applications can be written in multiple languages
+		-> Supports Python, R, Scala, Java
+
+	-> Spark can run on multiple cluster managers
+		-> Supports local, spark standalone, YARN, Mesos, Kubernetes
+
+    Spark is a unified framework.
+		
+	Spark provides a consistent set of APIs for performing different analytics workloads
+        using the same execution engine and some well defined data abstractions and operations.
+
+   	Batch Analytics of unstructured data	-> Spark Core API (low-level api)
+	Batch Analytics of structured data 	-> Spark SQL
+	Streaming Analytics (real time)		-> Spark Streaming (DStreams API), Structured Streaming
+	Predictive analytics (ML)		-> Spark MLLib  (mllib & ml)
+	Graph parallel computations  		-> Spark GraphX
+
+
+   Spark Architecture
+   ------------------
+
+	1. Cluster Manager (CM)
+		-> Applications are submitted to CMs
+		-> Allocates containers for lauching driver and executors on the cluster. 
+		-> Spark supports multiple CMs
+			-> local, standalone, YARN, Mesos, Kubernetes		
+
+	2. Driver
+		-> Master process
+		-> Runs the 'SparkContext' object
+		-> Manages the user code and sends the tasks to the executors as per the code. 
+
+		Deploy Modes:
+		-> Where to run the driver process
+		1. Client : default, driver runs on the client. 
+		2. Cluster: driver runs on one of the nodes on the cluster.
+
+	3. SparkContext
+		-> Is an application context
+		-> Starting point of execution
+		-> Is the link between the driver and tasks running on the executors
+
+	4. Executors
+		-> Receives the tasks from the Driver
+		-> All tasks run the same code but on different partitions of the data
+		-> The status of tasks are reported to the driver. 	
+
+
+   Spark Core API
+   ==============
+    
+     	RDD (Resilient Distributed Dataset)
+	-----------------------------------
+	-> RDD is the fundamental data abstraction of Spark
+
+	-> RDD is a collection of distributed in-memory partitions.
+	    -> Each partition is a collection of objects of some type.
+
+	-> RDDs are immutable
+
+	-> RDDs are lazily evaluated
+	   -> Transformations does not cause execution.
+	   -> Action commands trigger execution.
+
+
+   	Creating RDDs
+   	-------------
+	Three ways:
+
+	1. Creating an RDD from external files
+
+		rdd1 = sc.textFile(<path>, 4)
+
+	2. Creating RDD from programmatic data
+
+		rdd1 = sc.parallelize([1,3,2,4,2,6,8,7,9,0,5,7,6,8,9,4,3,6,5,8,0], 2)
+
+	3. By transforming existing RDD
+
+		rdd2 = rdd1.flatMap(lamda x: x.split())
+
+
+   	RDD Operations
+   	--------------
+	Two types of operations:
+
+	1. Transformations
+		-> Create lineage DAG (logical plan)
+		-> Does not cause execution
+
+	2. Actions
+		-> Execute RDDs
+		-> Lauches a job on the cluster
+
+
+   	RDD Lineage DAG
+   	---------------
+	rdd1 = sc.textFile("E:\\Spark\\wordcount.txt", 4)
+	rdd1 lineage DAG: (4) rdd1 -> sc.textFile on "E:\\Spark\\wordcount.txt"
+
+	rdd2 = rdd1.flatMap(lambda x: x.split())
+	rdd2 lineage DAG: (4) rdd2 -> rdd1.flatMap -> sc.textFile
+
+	rdd3 = rdd2.map(lambda x: (x, 1))
+	rdd3 lineage DAG: (4) rdd3 -> rdd2.map -> rdd1.flatMap -> sc.textFile
+
+	rdd4 = rdd3.reduceByKey(lambda x, y: x + y)
+	rdd4 lineage DAG: (4) rdd4 -> rdd3.reduceByKey -> rdd2.map -> rdd1.flatMap -> sc.textFile
+   
+  
+  
+    
+
+
+
+
+
+
+
+
