@@ -1,0 +1,103 @@
+
+  AWS Databricks
+  -------------------------------
+   Databricks Basics
+   PySpark Essentials
+	- Spark basics
+	- Spark SQL Crash course
+	- Structured Streaming basics
+   Databricks on AWS
+	- Setup Databricks resources on AWS
+	- Access S3 from Databricks
+   Databricks Lakehouse Platform 
+	– Delta Lake Basics
+	- Delta Lake Features
+   ELT with Spark SQL and Python
+   Incremental Data Processing 
+	- COPY INTO command
+	- Structured Streaming
+	- AutoLoader
+	- Schema management
+   Delta Live Tables - Production pipelines	
+   Unity Catalog
+	- Setup Unity Catalog Metastore
+	- Working with Storage Credentials and External Locations
+	- Working with Metastore, Catalogs and Schema on S3
+   Databricks Optimizations & Monitoring
+
+
+  Materials
+  ---------
+  - PDF presentations
+  - Code Modules (PySpark)
+  - Databricks Notebooks (DBC files)
+  - Lab Instructions
+  - Class Notes
+  - Github: https://github.com/ykanakaraju/databricksaws
+
+
+  Getting started with Spark on Databricks
+  ----------------------------------------   
+
+   ** Databricks Community Edition (free edition)
+ 		
+	Signup: https://www.databricks.com/try-databricks
+		Screen 1: Click on "Try databricks" button (top-right)
+		Screen 2: Click on 'click here' link at the bottom @ Are you looking for community edition?
+		Enter a valid email id
+		Verify the email to login to Community edition.
+
+	Login: https://community.cloud.databricks.com/login.html
+
+	Downloading a file from Databricks
+	----------------------------------
+		/FileStore/<FILEPATH>
+		https://community.cloud.databricks.com/files/<FILEPATH>?o=1072576993312365
+
+		Example:
+		dbfs:/FileStore/output/wc/part-00000
+		https://community.cloud.databricks.com/files/output/wc/part-00000?o=1072576993312365
+
+		dbfs:/FileStore/output/wordcount1/part-00000
+		https://community.cloud.databricks.com/files/output/wordcount1/part-00000?o=1072576993312365
+
+
+ 	Enabling DBFS File browser
+	--------------------------
+	<your account (top-right)> -> Settings -> Advanced -> Other -> DBFS File Browser (enable it)
+	(then, reload/refresh the browser page)
+
+
+ 
+  Databricks Basics
+  -----------------
+	
+	1. Compute - Spin up cluster resources
+		
+		1. All purpose clusters - continuously running, persistent cluster
+		2. Job clusters - spinned up to execute a job and then terminated	
+
+	2. Catalog
+		-> All data is stored in Catalog
+		-> All local files are store in /FileStore directory
+		-> Default hive warehouse directory : /user/hive/warehouse
+
+	3. Workspace
+		-> All the notebooks are managed in the workspace
+
+  
+  
+
+
+
+
+
+
+	
+
+
+
+
+
+
+
