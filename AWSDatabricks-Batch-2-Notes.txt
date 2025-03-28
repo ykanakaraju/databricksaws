@@ -129,9 +129,9 @@
 	dbutils.fs.rm('/FileStore/testdata3/2011_summary_renamed.csv')
 	dbutils.fs.rm('/FileStore/testdata3/', recurse=True)
 
-  
-  Spark
-  -----
+  ===========
+   Spark
+  ===========
 
     Spark is an open-source in-memory distributed computing framework.
 
@@ -255,7 +255,6 @@
      Spark SQL (pyspark.sql)
   ================================ 
 
-
     -> High Level API built on top of Spark Core
 
 	File Formats : Parquet (default), ORC, JSON, CSV (delimited text), Text (and Avro)
@@ -269,7 +268,6 @@
 	-> Represents a user session (SparkSession) running inside an application (SparkContext)
 	-> Each SparkSession can have its own configuration
 
-
 	from pyspark.sql import SparkSession
 
 	spark = SparkSession \
@@ -277,6 +275,118 @@
     		.appName("Basic Dataframe Operations") \
     		.config("spark.master", "local") \
     		.getOrCreate() 
+
+
+
+   DataFrame (DF)
+   --------------
+	-> Main data abstraction of Spark SQL
+	-> Is a collection of distributed in-memory partitions
+	-> Immutable
+	-> Lazily evaluated
+
+	-> DataFrame is a collection of "Row" objects.
+
+	-> DataFrame contains two components:
+		-> Data    : Collection of 'Row' objects
+		-> Schema  : StructType object
+
+			StructType(
+			   [
+				StructField('age', LongType(), True), 
+				StructField('gender', StringType(), True), 
+				StructField('name', StringType(), True), 
+				StructField('phone', StringType(), True), 
+				StructField('userid', LongType(), True)
+			   ]
+			)
+
+
+     Basic steps in creating a Spark SQL Application
+   -----------------------------------------------
+
+	1. Read/load data from some data-source into a DataFrame 		
+
+		#df1 = spark.read.format("json").load(inputData)
+		#df1 = spark.read.load(inputData, format="json")
+		df1 = spark.read.json(inputData)
+
+	2. Transform the DF using DF transformation methods or using SQL
+
+
+	        Using DF transformation methods
+		-------------------------------	
+		 df2 = df1.select("userid", "name", "age", "gender", "phone") \
+        		.where("age is not null") \
+        		.orderBy("gender", "age") \
+        		.groupBy("age").count() \
+        		.limit(4)
+
+
+		Using SQL
+		---------		
+		df1.createOrReplaceTempView("users")
+		spark.catalog.listTables()
+
+		qry = """select age, count(*) as count
+			from users
+			where age is not null
+			group by age
+			order by age
+			limit 4"""
+					
+		df3 = spark.sql(qry)
+		df3.show()
+
+		NOTE: You can drop temp-view:  
+		      -> spark.catalog.dropTempView("users")
+
+
+	3. Save the dataframe into some external destination (such as files/databases/hive etc)
+
+		df2.write.format("json").save("/FileStore/output/json")
+		df2.write.save("/FileStore/output/json", format="json")
+		df2.write.json("/FileStore/output/json")
+
+  Save Modes
+  ----------
+    -> Control the behaviour when saving a DF into an existing directory.
+
+	1. errorIfExists (default)
+	2. ignore
+	3. append
+	4. overwrite
+
+	df3.write.mode("overwrite").json(outputPath)
+	df3.write.json(outputPath, mode="overwrite")
+
+
+  LocalTempView & GlobalTempView
+  -------------------------------	
+	LocalTempView 
+	   -> Local to a specific SparkSession
+	   -> Created using createOrReplaceTempView command
+
+		df1.createOrReplaceTempView("users")
+
+	GlobalTempView
+	   -> Can be accessed from multiple SparkSessions within the application
+	   -> Tied to "global_temp" database
+	   -> Created using createOrReplaceGlobalTempView command
+
+		df1.createOrReplaceGlobalTempView ("gusers")
+
+
+	select age, count(1) as count
+	from global_temp.gusers
+	where age is not null
+	group by age
+	order by age
+	limit 4
+
+
+
+
 
 
 
