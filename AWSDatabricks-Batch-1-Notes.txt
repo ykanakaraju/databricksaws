@@ -23,7 +23,6 @@
 	- Setup Unity Catalog Metastore
 	- Working with Storage Credentials and External Locations
 	- Working with Metastore, Catalogs and Schema on S3
-   Databricks Optimizations & Monitoring
 
 
   Materials
