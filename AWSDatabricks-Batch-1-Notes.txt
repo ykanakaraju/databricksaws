@@ -950,7 +950,37 @@
 
 
 
+ Getting Started with AWS Databricks
+ -----------------------------------
 
+   1. Create AWS account (free trial)
+
+	Signup: https://aws.amazon.com/free
+	Login: https://console.aws.amazon.com
+
+
+   2. Create AWS Databricks account
+
+
+   3. Login to AWS Databricks Account console
+	
+	https://accounts.cloud.databricks.com/login
+
+
+    4. Create a AWS Databricks Workspace
+
+	-> This launches a CloudFormation Template
+	   -> Leave all defaults, accept the agreement and click on Create.
+
+	-> This spins up all required resources (S3, Lambda Functions, VPC, ..) on your AWS account.
+
+
+    5. Once completed, refresh your workspaces page.
+	Click on "Open" to launch the workspace
+	You will then go to Databricks UI.
+
+        
+   
 
 
 
