@@ -1,0 +1,144 @@
+ 
+ Agenda - Databricks Platform Management
+ ---------------------------------------
+  Getting Started with AWS Databricks
+  Databricks Workspace Components
+  Notebooks Basics
+  Databricks Utilities
+  Unity Catalog (UC)
+  Databricks Jobs & Workflows
+  Data Governance and Security
+  Delta Sharing & Lakehouse Federation
+  Databricks Local Developement & Connect
+  Deployment - Databricks Asset Bundles
+
+  Github: https://github.com/ykanakaraju/databricksaws
+
+
+  Getting Started
+  ---------------
+
+  1. Create an AWS account (free tier account is fine)
+	https://aws.amazon.com/free
+
+	Use any valid email address and complete the signup process. 
+
+
+  2. Create Databricks Account
+
+	Signup: https://login.databricks.com/signup
+
+	Use a valid email and verify your email
+	-> Choose the professional version
+	-> Choose AWS cloud 
+	and complete signup process. 
+
+
+  3. Login to your AWS Databricks account console
+
+	https://accounts.cloud.databricks.com/login
+
+
+  Creating a Databricks Workspace
+  -------------------------------
+
+	1. Login to your AWS account.
+
+	2. Login the Databricks account console.
+		https://accounts.cloud.databricks.com/login
+
+	3. Create a Workspace
+		- Select "Workspaces" left menu option
+		- Click on "Create Workspace" button
+		- Create workspace as follows:
+			Workspace name: <some name>
+			Region: <some region. ex: 'us-east-1'>
+			Storage and compute: Use your existing cloud account
+			Click on 'Continue' button
+		- Specify Cloud resources:
+			Cloud credentials: Add cloud credentials
+			Cloud storage: Add new cloud storage
+			Click on 'Create workspace' button
+	4. Approve the request to grant temporary token for Databricks
+		- Scroll down and click on approve button.
+
+	5. This will start provisioning the cloud resources for your workspace. 
+		- This may take 10 to 15 minutes. 
+		- Wait until the workspace is running.
+
+	6. Click on 'Workspaces' left menu again (and refresh this page if required)
+		Click on "Open" link of your workspace to open the workspace UI	
+			
+
+  Databricks Workspace Components
+  -------------------------------
+
+  1. Compute
+	-> Serverless
+		Compute resources are automatically provisioned and scaled as required. 
+		You can not create serverless compute.
+
+	-> All-purpose compute
+		This is an interactive cluster.
+		You can create the cluster with required configuration and use it as long as you need.
+		The cost of the cluster is mentioned as DBU/hour
+
+	-> Job Compute
+		This is non-interactive cluster
+		You an create job-compute like All-purpose compute
+		Job compute is a cluster configured to run a job.
+
+
+		
+  
+
+
+
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
