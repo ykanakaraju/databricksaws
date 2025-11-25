@@ -59,6 +59,7 @@
 			Cloud credentials: Add cloud credentials
 			Cloud storage: Add new cloud storage
 			Click on 'Create workspace' button
+
 	4. Approve the request to grant temporary token for Databricks
 		- Scroll down and click on approve button.
 
@@ -81,26 +82,40 @@
 	-> All-purpose compute
 		This is an interactive cluster.
 		You can create the cluster with required configuration and use it as long as you need.
-		The cost of the cluster is mentioned as DBU/hour
+		The cost of the cluster is given in DBU/hour
 
 	-> Job Compute
-		This is non-interactive cluster
-		You an create job-compute like All-purpose compute
+		This is a non-interactive cluster
+		You can not create job-compute like All-purpose compute
 		Job compute is a cluster configured to run a job.
 
+	
+ Assignments for Practice
+ ------------------------
 
-		
-  
+  1. Create AWS Databricks account. 
+     Login to the Account Console and create a Databricks workspace
 
+  2. Create an all-purpose single-node cluster without photon acceleration.
+     Stop the cluster and edit the cluster configuration to enable photon acceleration.
+     Terminate and delete th cluster.
 
+  3. List out the differences between All-purpose and Job clusters?
+     What is the purpose of Cluster pools?
+
+  4. Create a catalog called "dev" and create a schema called "demodb" in the catalog.
+     Create a table using UI by uploading "Baby_Names.csv" file (provided in the Github)
+     Query the table in SQL window using 'SQL starter warehouse'
+
+  5. Create a managed volume inside the "dev" catalog and upload some files and folders.
+     In which S3 bucket are these files uploaded? 
+
+     
 
    
+	
 
-
-
-
-
-
+   
 
 
 
