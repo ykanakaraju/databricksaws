@@ -12,7 +12,10 @@
   Databricks Local Developement & Connect
   Deployment - Databricks Asset Bundles
 
-  Github: https://github.com/ykanakaraju/databricksaws
+ -------------------------------------------------------
+  Github Repo: 
+  https://github.com/ykanakaraju/databricksaws
+ -------------------------------------------------------
 
 
   Getting Started
@@ -89,26 +92,94 @@
 		You can not create job-compute like All-purpose compute
 		Job compute is a cluster configured to run a job.
 
+
+  Enabling DBFS file brower
+  -------------------------
 	
+	Account icon (top-right) -> Setting -> Advanced -> Other -> Enable 'DBFS File Browser'
+	Refresh the browse page to save the changes.
+
+
+ Databricks 'dbutils'
+ --------------------
+
+	'help' command
+	------------
+	dbutils.help()
+	dbutils.fs.help()
+	dbutils.fs.help('ls')
+
+
+	'ls' command
+	------------
+	dbutils.fs.ls("/")
+	dbutils.fs.ls("/FileStore")
+		list paths => [ d[0] for d in dbutils.fs.ls("/FileStore")]
+	dbutils.fs.ls("/FileStore/testdata/csv")
+
+
+	'mkdirs' command
+	----------------
+	dbutils.fs.mkdirs("/FileStore/testdata2")
+	dbutils.fs.ls("/FileStore")
+
+
+	'cp' command to copy files between DBFS directories
+	---------------------------------------------------
+	dbutils.fs.cp("/FileStore/testdata/csv/2011_summary.csv", "/FileStore/testdata2")
+	dbutils.fs.cp("/FileStore/testdata/csv/2012_summary.csv", "/FileStore/testdata2")
+	dbutils.fs.cp("/FileStore/testdata/csv/2013_summary.csv", "/FileStore/testdata2")
+
+	dbutils.fs.ls("/FileStore/testdata/csv")
+
+
+	'mv' command for moving or renaming files
+	------------------------------------------
+	dbutils.fs.help('mv')
+
+	dbutils.fs.mv("/FileStore/testdata/csv", "/FileStore/testdata3", recurse=True)
+	dbutils.fs.ls('/FileStore/testdata3')
+
+	dbutils.fs.mv('/FileStore/testdata3/2011_summary.csv', '/FileStore/testdata3/2011_summary_renamed.csv')
+
+
+	'rm' command to remove files & directories from DBFS
+	-----------------------------------------------------
+	dbutils.fs.rm('/FileStore/testdata3/2011_summary_renamed.csv')
+	dbutils.fs.rm('/FileStore/testdata3/', recurse=True)
+
+
+
+
  Assignments for Practice
  ------------------------
 
-  1. Create AWS Databricks account. 
-     Login to the Account Console and create a Databricks workspace
+  1. Create AWS Databricks account.      
+     Login to the Account Console and create a Databricks workspace.
+     Make a note of all the compute and storage resources created.
 
   2. Create an all-purpose single-node cluster without photon acceleration.
      Stop the cluster and edit the cluster configuration to enable photon acceleration.
-     Terminate and delete th cluster.
+     Terminate and delete the cluster.
 
   3. List out the differences between All-purpose and Job clusters?
      What is the purpose of Cluster pools?
 
   4. Create a catalog called "dev" and create a schema called "demodb" in the catalog.
-     Create a table using UI by uploading "Baby_Names.csv" file (provided in the Github)
+     Create a table using UI by uploading "Baby_Names.csv" file (provided in the Github repo)
      Query the table in SQL window using 'SQL starter warehouse'
 
   5. Create a managed volume inside the "dev" catalog and upload some files and folders.
      In which S3 bucket are these files uploaded? 
+
+  6. Create a Workspace folder called "DatabricksPractice". 
+     Create another folder inside it "Notebook basics"
+     Create a notebook in the above folder and demo all basic notebook features including %run command
+
+  7. Download you notebook into your local machine in different formats.
+     Download the "AWSDatabricks.dbc" file from github and import it into your workspace,
+
+  8. Create a notebook to demo file system ops using %fs commnd and dbutils.fs utility. 
 
      
 
@@ -116,8 +187,6 @@
 	
 
    
-
-
 
 
 
