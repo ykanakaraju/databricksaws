@@ -149,6 +149,9 @@
 	dbutils.fs.rm('/FileStore/testdata3/', recurse=True)
 
 
+  Creating Stroage Credential
+  ---------------------------
+   https://docs.databricks.com/aws/en/connect/unity-catalog/cloud-storage/s3/s3-external-location-manual
 
 
  Assignments for Practice
@@ -179,7 +182,44 @@
   7. Download you notebook into your local machine in different formats.
      Download the "AWSDatabricks.dbc" file from github and import it into your workspace,
 
-  8. Create a notebook to demo file system ops using %fs commnd and dbutils.fs utility. 
+  8. Create a notebook to demo file system operations using %fs 
+     Use dbutils.fs utility package to copy only CSV files from one folder to another.
+
+  9. Define the following bound parameters for a notebook using widgets utility.
+	bound parameters: empid (text), city (dropdown) and skills (multi-select)
+     Run this notebook from another notebook using dbutils.notebook utility.
+
+  10. Create a catalog called 'dev' in your UC-workspace.
+      Create a schema called 'demodb' in the catalog and create a table based on an uploaded file.
+
+  11. What are the various data objects that you can have in a Unity-catalog metastore? List them
+      Which object represents the IAM role required to connect to an external s3-bucket. 
+      If you want to read data from an s3 bucket which object do you need to create in your workspace?
+
+  12. Create a delta table called 'people' in the schema that you created earlier (i.e 'demodb')
+      Perform a few insert, update and delete operations.
+      List out all the versions and select the data of the delta table at different versions.
+      Restore your table to an older version.
+      Delete all unused data files that are not required in the current version. 
+
+  13. Create a 'Storage Credential' and an 'External Location' to connect an S3 bucket.
+      (You may create a sample S3 bucket in your AWS account and load some data into it for testing)
+
+  14. What is your understanding of medallion architecture? 
+      In whch which layer of the medallion architecture you create tables containing aggregated data?
+
+  15. Execute the "UC-Movie-Data-Analysis" acse-study shared with you and create all the delta tables in bronze, silver and gold tables. 
+
+   16. What your understanding of Unity Catalog Data access control and security model.
+	Where do you control the grants for a specific catalog/schema/tables inside UC workspace.
+
+   17. How do you examine all the notebooks, queries, tables etc in which a specific table is used (i.e lineage)
+
+
+
+
+
+
 
      
 
@@ -187,15 +227,6 @@
 	
 
    
-
-
-
-
-
-
-
-
-
 
 
 
