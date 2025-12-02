@@ -1,0 +1,77 @@
+Databricks to Databricks Delta Sharing
+--------------------------------------
+	
+1. Login to account console and open your provider workspace.
+	https://accounts.cloud.databricks.com/
+	
+2. Click on Catalog -> Delta Sharing.
+
+	To be able to share, the user need to have CREATE_PROVIDER and CREATE_SHARE permissions.
+	A metastore admin user will have these permissions.
+	
+3. Go to account console. Click on 'Catalog' menu and click on your metastore to open the matastore page.
+	Click on 'Metastore Admin' -> 'Edit' button and add your account. 
+	Delta Sharing: Check it and give a reasonable expiration date. 
+	
+4. Go to your workspace and open Delta Sharing page.
+	You should now see the metastore shared with you. 
+	
+	To check your permissions, Click on 'Catalog' menu option.
+	Click on the gear icon and select the 'metastore'.
+	Go to 'Permissions' tab.
+	You should see the privileges here. You should see CREATE PROVIDER, CREATE RECIPIENT and CREATE SHARE privileges already assigned on your workspace. You need these permission to be a provider in Delta sharing. 
+	Note: If you are using this workspace as a Recipient then you need USE PROVIDER, USE RECIPIENT and USE SHARE privileges.
+		
+5. Note: We are using an Azure Databricks workspace as a Recipient workspace.
+   In that workspace we have given USE PROVIDER, USE RECIPIENT and USE SHARE privileges.
+   
+   Go to the Recipient workspace.
+   Go to Catalog -> Delta Sharing.
+   From top-right account menu, select 'Copy Sharing identifier' to copy it
+   Make a note of the 'Sharing identifier' - azure:eastus:9889073a-0d2c-46a6-924a-1c252e82b4df
+     
+6. Create a 'Recipient' in the Provider workspace.
+	Open the provider workspace and go to Catalog -> Delta Sharing
+	Click on 'Shared by me' tab.
+	Click on 'New Recipient' button.
+	Create a Recipient as follows: 
+		Recipient name: ykr-dev-ws (name of the Recipient workspace)
+		Recipient type: Databricks
+		Sharing identifier (Databricks recipient only): <copy from step-5>	
+		
+7. Create a Share in the Provider workspace.
+	Open the provider workspace and go to Catalog -> Delta Sharing
+	Click on 'Shared by me' tab.
+	Click on 'Share data' button and create a share as follows:
+		Share name: from-ykr-aws-databricks
+		Click on 'Save and continue' button.
+		Select a few schemas/tables and click on 'Save and continue' button.
+		(you can share at schema level or table level only, not at catalog level)
+		Select a few notebooks (and external locations) and click on 'Save and continue' button.
+		Select a recipient (that you have created earlier).
+		Click on 'Sare data' button. 
+	
+8. Check your share from the Recipient workspace (azure workspace in our case)
+	Go to recipient workspace and go to 'Delta Sharing' section
+	Under 'Shared with me' you find the share. 
+	Click and open the share.
+	Click on 'Mount to catalog'
+	Select 'Create a new catalog' option and give a suitable name (ykr-aws-share)
+	
+9. Use the shared objects from the recipient workspace.
+
+	You can now query the tables from the schemas shared by the provider workspace.
+	Open SQL Editor and execute queries against the shared objects.
+
+
+
+
+
+
+
+
+
+
+
+	
+	

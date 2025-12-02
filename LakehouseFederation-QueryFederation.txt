@@ -1,0 +1,39 @@
+
+  Lakehouse Federation - Query Federation
+  ---------------------------------------
+  
+ 1. Create a MySQL RDS instance. 
+	Connect to the RDS instance using MySQL Workbench and load some data.
+	
+ 2. Make a note of the following details of the MySQL RDS database instance.
+
+	endpoint: demomysqldb.cpavjcjlylsm.us-east-1.rds.amazonaws.com
+	username: xxx
+	password: xxx
+	
+ 3. Open your databricks workspace and go to Catalog -> External Data -> Connections
+	Create a connection by clickinh on 'Create Connection' button.
+		Connection name: rds-mysql-db-connection
+		Connection type: MySQL
+		-> Next
+		Host: <end-point> from step-2
+		Port: 3306
+		User: <as noted in step-2>
+		Password: <as noted in step-2>		
+		Save the details and click on 'Test Connection' to validate your connection.
+	
+		Click on 'Create Catalog' button to create the catalog
+		Check the details and click on 'Test Connection' to validate the federated catalog's connection to the data source.
+		-> Next
+		Check access details and manage access permissions as required.
+		-> Next
+		Save 
+		
+ 4. Use the foreign catalog from your workspace.
+ 
+	You can noe query the data from the foreign catalog created as above.
+	You can also join the tables from the foriegn catalog with your workspace tables.
+		
+	
+	
+		
