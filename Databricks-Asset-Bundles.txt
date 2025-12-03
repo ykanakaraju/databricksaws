@@ -1,0 +1,157 @@
+Databricks Asset-Bundles
+========================
+
+1. Create a sample notebooks and create a JOB to run that notebook
+2. Create an DTL notebook and create an ETL job to run that notebook.
+3. Create a schema to store your delta tables: ex: demo_catalog.
+4. Create amn all-purpose compute and open a terminal by connecting a notebook to the compute
+	
+
+5. In the terminal run the following commands as required:
+
+	DAB CLI Commands
+
+	CD to the project root folder
+	cd /Workspace/Users/xxx/AWSDatabricks/DatabricksAssetBundles
+	
+	Run the following commands as needed:
+
+	databricks bundle validate -t dev
+	databricks bundle deploy –t dev	
+	databricks bundle destroy –t dev
+	databricks bundle summary
+	
+
+Project Structure
+-----------------
+  <root> => Project root folder
+  
+  <root>/databricks.yml
+  
+  <root>/resources
+	<root>/resources/jobs
+		<root>/resources/jobs/dab_demo_job.yml
+	<root>/resources/notebooks
+		<root>/resources/notebooks/dab_demo_notebook	(Job notebook)
+		<root>/resources/notebooks/dlt_dab_demo  		(DLT notebook)
+	<root>/resources/pipelines
+		<root>/resources/pipelines/dab_demo_pipeline.yml		
+	<root>/resources/schemas
+		<root>/resources/schemas/bronze_schema.yml
+	
+  <root>/src	
+	<root>/src/variables.yml
+	<root>/src/env
+		<root>/src/env/dev.yml
+		<root>/src/env/prod.yml
+		
+		
+<root>/databricks.yml
+---------------------
+  
+# Databricks Asset Bundle
+bundle:
+  name: dab_demo
+
+include:
+  - src/*.yml
+  - src/env/*.yml
+  - resources/jobs/*.yml
+  - resources/pipelines/*.yml
+  - resources/schemas/*.yml
+
+permissions:
+  - group_name: de_group
+    level: CAN_MANAGE
+
+targets:
+  dev:
+    default: true
+    mode: development
+    workspace:
+      host: https://dbc-c9011cd8-c62c.cloud.databricks.com/
+  prod:
+    workspace:
+      host: https://dbc-c9011cd8-c62c.cloud.databricks.com/
+	  
+	  
+<root>/resources/jobs/dab_demo_job.yml
+--------------------------------------
+resources:
+  jobs:
+    dab_demo_job:
+      name: dab_demo_job
+      tasks:
+        - task_key: dab_demo_notebook
+          notebook_task:
+            notebook_path: ../notebooks/dab_demo_notebook.py
+            source: WORKSPACE
+      queue:
+        enabled: true
+      performance_target: PERFORMANCE_OPTIMIZED
+	  
+
+<root>/resources/pipelines/dab_demo_pipeline.yml
+------------------------------------------------
+resources:
+  pipelines:
+    pipeline_dab_demo_pipeline:
+      name: dab_demo_pipeline
+      libraries:
+        - glob:
+            include: ../notebooks/dlt_dab_demo
+      schema: ${resources.schemas.bronze_schema.name}
+      photon: true
+      catalog: ${resources.schemas.bronze_schema.catalog_name}
+      serverless: true
+      root_path: ../notebooks	  
+	  
+	  
+<root>/resources/schemas/bronze_schema.yml
+------------------------------------------	  
+resources:
+  schemas:
+    bronze_schema:
+      name: default
+      catalog_name: ${var.catalog} 
+	  
+	  
+<root>/src/variables.yml
+------------------------	  
+variables:
+  catalog:
+    default: demo_catalog	  
+
+
+<root>/src/env/dev.yml
+----------------------
+targets:
+  dev:
+    permissions:
+      - group_name: de_group
+        level: CAN_MANAGE
+    presets:
+      name_prefix: (dev ${workspace.current_user.short_name})
+      source_linked_deployment: false
+	  
+
+
+<root>/src/env/prod.yml
+-----------------------
+targets:
+  prod:
+    permissions:
+      - group_name: de_group
+        level: CAN_RUN
+      - group_name: de_group
+        level: CAN_VIEW
+
+
+
+
+
+
+
+
+
+
