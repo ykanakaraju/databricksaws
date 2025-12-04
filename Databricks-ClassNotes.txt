@@ -154,8 +154,15 @@
    https://docs.databricks.com/aws/en/connect/unity-catalog/cloud-storage/s3/s3-external-location-manual
 
 
- Assignments for Practice
- ------------------------
+  Enable Serverless Compute at the Account Level
+  ----------------------------------------------
+	- Log in to your Databricks account console as an account administrator.
+	- Navigate to Feature Enablement: Go to Settings and then Feature Enablement.
+	- Locate the option for "Serverless compute for workflows, notebooks, and Delta Live Tables" and enable it. 
+
+
+  Assignments for Practice
+  ------------------------
 
   1. Create AWS Databricks account.      
      Login to the Account Console and create a Databricks workspace.
@@ -206,7 +213,7 @@
       (You may create a sample S3 bucket in your AWS account and load some data into it for testing)
 
   14. What is your understanding of medallion architecture? 
-      In whch which layer of the medallion architecture you create tables containing aggregated data?
+      In which layer of the medallion architecture you create tables containing aggregated data?
 
   15. Execute the "UC-Movie-Data-Analysis" acse-study shared with you and create all the delta tables in bronze, silver and gold tables. 
 
@@ -214,6 +221,21 @@
 	Where do you control the grants for a specific catalog/schema/tables inside UC workspace.
 
    17. How do you examine all the notebooks, queries, tables etc in which a specific table is used (i.e lineage)
+
+   18. Create a LDP pipeline using the notebooks provided in the material (dbc file -> 4. Lakeflow Declarative Pipelines) 
+	Adjust the paths of datasets as appropriate as per your volume. RUn the pipeline using serverless compute.
+	Examine the notebook code and create externall location as required.
+
+   19. Create a Job with three tasks - [Land New Data Task]-> [LDP Pipeline] -> [Pipeline results]
+	Configure the JOb to run using Job compute. 
+	Configure Job configurations to use a single-node Job cluster
+	Run the Job and check the results.
+
+   20. Create a second workspace in different region using a different metastore.
+	Share a schema that is available in your main workspace with the second workspace using Delta Sharing
+	(Detail step-by-step instructions are provided)
+
+
 
 
 
