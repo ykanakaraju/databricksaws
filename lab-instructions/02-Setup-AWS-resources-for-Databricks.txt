@@ -1,0 +1,171 @@
+
+ Lab 7 - Setup AWS resources for Databricks
+ --------------------------------------------
+
+ 1. Setup an S3 bucket to store our datasets and upload retail_csv dataset
+
+	Bucket Name: cts-databricks
+	Data to be uploaded: retail_csv folder
+
+		
+ 2. Create AWS IAM Role for EC2 instances. 
+
+	2.1 Open IAM console and create an EC2 Role
+	    
+		AWS Service Use-case: EC2
+		Policy to be added: No need to attach any policies/permissions
+		Role name: DBWorkspaceEC2Role
+
+	2.2 Click on the 'View role' button and make a note of 'Instance profile ARN' & 'Role ARN'	
+
+		Note: If you want to attach an IAM role to an ec2 instance you need to use Instance Profile.
+		When you use the CLI or SDK, you need to create the instance profile separately and attach 
+		it to the IAM role and then attach the instance profile to the ec2 instance.
+
+	** Instance profile ARN: arn:aws:iam::<YOUR_ACCOUNT_ID>:instance-profile/DBWorkspaceEC2Role
+		       IAM role ARN: arn:aws:iam::<YOUR_ACCOUNT_ID>:role/DBWorkspaceEC2Role
+		   
+	2.3 Attach an inline policy to the above role to access 'cts-databricks' S3 bucket	
+		
+		JSON: As shown towards the end of this document
+		Name: DBWorkspaceS3Policy
+		
+	2.4 Attach 'AWSGlueServiceRole policy' to the above role.
+	
+	NOTE: After these steps, the 'Permissions policies' of the role should have two policies:
+			AWSGlueServiceRole
+			DBWorkspaceS3Policy
+
+ 3. Create and login to a Databricks workspace. 
+	
+	3.1 Login to your Databricks account and create a workspace. (or open an existing workspace)
+		
+		Create workspace -> Quick start (recommended)
+		Workspace Name: AWS Databricks Workspace
+		AWS Region: us-east-1
+
+		This will launch an AWS Cloud Formation stack
+
+	3.2 Enter your account password in AWS Cloud Formation stack and click on 'Create stack'
+	     This will provision the workspace resources on AWS.
+		 
+	3.3 Refresh your Databricks workspace page and wait until the status is 'Running'
+	
+	3.4 Open the workspace and sign-in to the Databricks UI using your databricks credentials.
+	
+	
+ 4. Add 'PassRole' policy (on EC2 role) to the Databricks IAM role
+ 
+	4.1 Open the databricks workspace page (from Account Console) and click on the workspace.
+	
+	4.2 Make a note of ARN key under credentials card. 
+		(for example: arn:aws:iam::<YOUR_ACCOUNT_ID>:role/<Databricks-Workspace-Role>)
+		
+	4.3 Open your AWS account, open IAM and search for the above role (i.e <Databricks-Workspace-Role>)
+	
+	4.4 Click on the role and click on the policy name to edit.
+	
+	4.5 Append the following JSON to the existing permissions.
+	
+		{
+			"Effect": "Allow",
+			"Action": "iam:PassRole",
+			"Resource": "arn:aws:iam::<YOUR_AWS_ACCOUNT_ID>:role/DBWorkspaceEC2Role"
+		}
+		
+		NOTE: Make sure AWS your account ID (12 digit account id) and policy name are correct. 
+			  Make sure to replace the role name with what your created in a previous step. 
+			  
+	4.6 Click on 'Save Changes' button to save the changes
+
+ 5. Register AWS IAM Instance Profile with Databricks Account.
+	
+	5.1 Login to your databricks UI with the workspace you created earlier.
+		-> Click "Open" against the workspace.
+	5.2 Click on <account menu> -> 'Settings' -> 'Security' menu option	
+	5.3 Click on 'Instance profiles' -> 'Manage' button -> 'Add instance profile' button.	
+	5.4 Provide the 'Instance profile ARN' ('IAM role ARN' will be populated) and click on 'Add' 	
+		
+	Question:
+	What is an EC2 instance profile?
+	
+	An instance profile is a container for an IAM role that you can use to pass role information to an EC2 instance when the instance starts.
+
+ 6. Create a databricks cluster and configure Glue Data Catalog as the metastore on your cluster
+
+	6.1 Create a single node cluster with the following details:
+		Name: CTS Demo Cluster
+		Policy: Unrestricted - Single Node
+		Use photon acceleration: Uncheck
+		Node type: m5d.large (8 GB Memory, 2 Cores)
+		Terminate after 15 minutes of inactivity
+		Instance profile: CTSDatabaricksEC2Role
+		Expand 'Advanced Options' section and select 'Spark' tab
+			Add the following line to 'Spark Config' section	
+			spark.databricks.hive.metastore.glueCatalog.enabled true
+
+		* Leave all other options as defaults
+		
+		Click on 'Create compute' button	     
+
+ 7. Create a Glue crawler to crawl the 'retail_csv' s3 bucket.
+ 
+		database: retail_csv
+		crawler: Retail CSV Crawler
+		S3 bucket to crawl: s3://cts-databricks/retail_csv/
+		IAM Role: AWSGlueServiceRole-retail_csv
+		
+		Run the crawler and wait until the tables are created.
+		
+ 8. Query the Glue tables (which are linked to S3 buckets) using spark in a Notebook
+ 
+	8.1 Create a notebook and run the following commands in separate cells.
+	
+		df1 = spark.read.csv("s3://cts-databricks/retail_csv/orders/")
+		display(df1)
+		
+		spark.sql("show databases").show()		
+		spark.sql("use retail_db")		
+		spark.sql("select * from orders").show()
+	
+
+------------------------------------------------------------------------
+   inline policy JSON script (use this in steps: 3.2, 7.3, 9.3 )
+   NOTE: make sure to replace 'cts-databricks' with your bucket name. 
+------------------------------------------------------------------------
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "s3:ListBucket"
+      ],
+     "Resource": [
+        "arn:aws:s3:::cts-databricks"
+      ]
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "s3:PutObject",
+        "s3:GetObject",
+        "s3:DeleteObject",
+        "s3:PutObjectAcl"
+      ],
+      "Resource": [
+         "arn:aws:s3:::cts-databricks/*"
+      ]
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "s3:ListAllMyBuckets"
+      ],
+     "Resource": [
+        "arn:aws:s3:::*"
+      ]
+    }
+  ]
+}
+--------------------------------------------------

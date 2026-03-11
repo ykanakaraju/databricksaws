@@ -1,0 +1,83 @@
+CTSDatabricksUCMasterRole 
+-------------------------
+
+Trust Relationships JSON
+-----------------------
+
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "Statement1",
+            "Effect": "Allow",
+            "Principal": {
+                "AWS": [
+                    "arn:aws:iam::<YOUR_AWS_ACCOUNT_ID>:role/<THIS_ROLE_NAME>",
+                    "arn:aws:iam::414351767826:role/unity-catalog-prod-UCMasterRole-14S5ZJVKOTYTL"
+                ]
+            },
+            "Action": "sts:AssumeRole",
+            "Condition": {
+                "StringEquals": {
+                    "sts:ExternalId": "<DATABRICKS_ACCOUNT_ID>"
+                }
+            }
+        }
+    ]
+}
+
+
+IAM Role Policy
+---------------
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Action": [
+                "s3:GetObject",
+                "s3:PutObject",
+                "s3:DeleteObject",
+                "s3:ListBucket",
+                "s3:GetBucketLocation",
+                "s3:GetLifecycleConfiguration",
+                "s3:PutLifecycleConfiguration"
+            ],
+            "Resource": [
+                "arn:aws:s3:::<BUCKET_NAME>/*",
+                "arn:aws:s3:::<BUCKET_NAME>"
+            ],
+            "Effect": "Allow"
+        },
+        {
+            "Action": [
+                "sts:AssumeRole"
+            ],
+            "Resource": [
+                "arn:aws:iam::<YOUR_AWS_ACCOUNT_ID>:role/<AWS_IAM_ROLE_NAME>"
+            ],
+            "Effect": "Allow"
+        }
+    ]
+}
+
+
+Bucket Policy
+--------------
+
+{
+	"Version": "2012-10-17",
+	"Statement": [
+		{
+			"Sid": "Statement1",
+			"Principal": {
+				"AWS": "arn:aws:iam::<YOUR-AWS-ACCOUNT-ID>:role/<ROLE-NAME>"
+			},
+			"Effect": "Allow",
+			"Action": [ "s3:*" ],
+			"Resource": [
+				"arn:aws:s3:::<BUCKET>/*",
+             	"arn:aws:s3:::<BUCKET>"
+			]
+		}
+	]
+}

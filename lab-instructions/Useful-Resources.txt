@@ -1,0 +1,14 @@
+
+
+1. Create a storage credential and external location for S3 using Catalog Explorer or SQL
+
+	https://docs.databricks.com/aws/en/connect/unity-catalog/cloud-storage/s3/s3-external-location-manual
+	
+2. Set up Delta Sharing for your account (for providers)
+
+	https://docs.databricks.com/aws/en/delta-sharing/set-up
+	
+3. Lakehouse Federation
+
+	https://docs.databricks.com/aws/en/query-federation/
+	https://docs.databricks.com/aws/en/query-federation/database-federation
