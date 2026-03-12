@@ -1,0 +1,78 @@
+
+ Agenda
+ --------------------
+ Getting Started
+ Data Intelligence Platform
+ Databricks Lakehouse & medallion architecture
+ Databricks Assistant
+ Delta Lake - Deep Dive
+ ETL and Incremental Data Processing
+ Modeling Data Management Solutions
+ Lakeflow Declarative Pipelines (LDP)
+ REST API & Databricks CLI
+ Databricks SQL - Dashboards & Visualizations
+ Data Governance and Security
+ Monitoring and Logging
+
+
+ Pre-requisites
+ --------------
+ Databricks Workspace Components
+ Unity Catalog (UC)
+ Databricks Tooling, Jobs & Workflows
+ Data Governance and Security
+ Delta Sharing & Lakehouse Federation
+ Databricks Connect
+ Testing and Deployment
+
+
+  Getting started with Spark on Databricks Free Edition
+  -----------------------------------------------------
+
+   -> Click on https://www.databricks.com/try-databricks
+   -> Click on "Try Databricks" button (top-right corner)
+   -> Click on "Click here" link towards the bottom
+	** Looking for Databricks Free Edition? Click here
+   -> Provide a valid email address 
+   -> Enter the validation code sent to the email to login to Databricks free edition
+
+	-> Login link: http://login.databricks.com
+
+
+    	Azure Databricks Account Console: https://accounts.azuredatabricks.net/
+	AWS Databricks Account Console:	  https://accounts.cloud.databricks.com/login
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
