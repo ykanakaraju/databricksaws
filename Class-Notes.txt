@@ -15,8 +15,8 @@
  Monitoring and Logging
 
 
- Pre-requisites
- --------------
+ Already covered
+ ----------------------------------
  Databricks Workspace Components
  Unity Catalog (UC)
  Databricks Tooling, Jobs & Workflows
@@ -43,26 +43,71 @@
 	AWS Databricks Account Console:	  https://accounts.cloud.databricks.com/login
 
 
+  Databricks Data Intelligence Platform
+  --------------------------------------
+
+	The Databricks Data Intelligence Platform is a unified system that combines the core benefits 
+	of a Data Lakehouse with a Data Intelligence Engine to automate and simplify the data and AI lifecycle.
+
+   
+	Core Architecture & Engine
+	---------------------------
+
+	1. Data Lakehouse Architecture: 
+		Merges the scalability of data lakes with the reliability and performance of 
+		data warehouses into a single platform for all data (structured and unstructured) 
+		and workloads (BI and AI).
+
+	2. DatabricksIQ (Data Intelligence Engine): 
+		An AI-driven engine that understands the unique semantics, jargon, and usage 
+		patterns of your organization's data. It powers automatic performance tuning, 
+		natural language search, and coding assistance.
+
+	3. Photon: 
+		A high-performance, vectorized execution engine designed to accelerate SQL and 
+		DataFrame operations on the lakehouse.
+
+	Data Management & Governance
+	----------------------------
+	* Unity Catalog - A unified governance solution for all data and AI assets. 
+
+	* Delta Lake - An open-source storage layer that provides ACID transactions, scalable metadata handling, 
+		       and unified streaming and batch data processing on existing cloud storage.
+
+	* Delta Sharing - An open protocol for secure, real-time data sharing with other organizations 
+			and platforms without duplicating data.
 
 
+	Data Engineering & Ingestion
+	----------------------------
+	* Lakeflow: A unified solution for data engineering consisting of three key parts
+	  - Lakeflow Connect
+	  - Lakeflow Declarative Pipelines (Delta Live Tables)
+	  - Lakeflow Jobs (Databricks Workflows)
+
+	* Auto Loader: A tool for incrementally and automatically ingesting files as they arrive
 
 
+	AI & Machine Learning
+	---------------------
+	* Mosaic AI: A comprehensive platform for developing and deploying traditional ML and Generative AI. 
+		     It includes tools for fine-tuning models, building AI agents, and model evaluation.
+
+	* MLflow: An open-source platform managed within Databricks to handle the entire ML lifecycle.
+
+	* Model Serving: Provides REST endpoints for deploying AI models to production.
 
 
+	Data Warehousing & BI
+	---------------------
+	* Databricks SQL (DB SQL): A serverless data warehouse service to run SQL queries and build dashboards.
 
+	* AI/BI Genie: A natural language interface that allows business users to query data and generate 
+		       visualizations conversationally without needing to write SQL.
 
+	* Notebooks
 
-
-
-
-
-
-
-
-
-
-
-
+	
 
 
 
